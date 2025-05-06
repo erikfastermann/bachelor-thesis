@@ -2,6 +2,16 @@ from pprint import pprint
 
 BOTTOM = 'bottom'
 
+def P_bottom(E):
+    P = {}
+    for a, rk in E.items():
+        if rk == 0:
+            l = a
+        else:
+            l = (a,) + (BOTTOM,) * rk
+        P[l] = [(BOTTOM, set(), 1)]
+    return P
+
 class TrimWTGh:
     def __init__(self, Q, E, F, P_wt):
         # TODO: Check correctness.
@@ -65,7 +75,7 @@ class TrimWTGh:
         for next_q in edges[current_q]:
             if next_q == end_q:
                 return True
-            if self._has_path(self, edges, visited, next_q, end_q):
+            if self._has_path(edges, visited, next_q, end_q):
                 return True
 
         return False
@@ -105,6 +115,25 @@ P_wt = {
     ('y', BOTTOM): [(BOTTOM, set(), 1)],
     ('d', BOTTOM, BOTTOM, BOTTOM): [(BOTTOM, set(), 1)],
 }
+
+G = TrimWTGh(Q, E, F, P_wt)
+pprint(G.edges())
+pprint(G.large_duplication_property())
+print('---')
+
+# Example 16:
+Q = {'q0', 'q_', 'qf'}
+E = {'a': 0, 'y': 1, 'o': 2, 'y1': 1, 'y2': 1}
+F = {'q0': 0, 'q_': 0, BOTTOM: 0, 'qf': 1}
+P_wt = {
+    'a': [('q0', set(), 1)],
+    ('y', 'q0'): [('q0', set(), 1)],
+    ('o', 'q0', BOTTOM): [('q_', {((1,), (2,))}, 2)],
+    ('y1', 'q_'): [('q_', set(), 2)],
+    ('y2', 'q_'): [('q_', set(), 2)],
+    ('o', 'q_', 'q0'): [('qf', set(), 2)],
+}
+P_wt.update(P_bottom(E))
 
 G = TrimWTGh(Q, E, F, P_wt)
 pprint(G.edges())
